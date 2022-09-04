@@ -19,6 +19,45 @@
 h1 {
   color: #162802;
 }
+.open, .close {
+  border: 2px solid black;
+  
+}
+.open div {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+}
+.close div {
+  display: none;
+}
+.open button {
+  background-color: transparent;
+}
+.open button:hover {
+  border-color: transparent;
+}
+.color {
+  height: 25px;
+  width: 25px;
+  margin-right: 1rem
+
+}
+.legend {
+  display: flex;
+  flex-flow: column nowrap;
+}
+.legend div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.blue {
+  background-color: #a0c7fe;
+}
+.green {
+  background-color: #dafea4;
+}
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
