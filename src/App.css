@@ -23,18 +23,18 @@ h1 {
   border: 2px solid black;
   
 }
-.open div {
+.close div {
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
 }
-.close div {
+.open div {
   display: none;
 }
-.open button {
+.close button {
   background-color: transparent;
 }
-.open button:hover {
+.close button:hover {
   border-color: transparent;
 }
 .color {
