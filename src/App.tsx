@@ -1,13 +1,19 @@
-import { useState } from 'react'
-import Ohio from './data/Ohio'
+import State from './data/State'
+import Map from './Map'
+import { StateContext, states } from './assets/StateContext'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
 
+function App() { 
+
+  
   return (
     <div>
-      <Ohio />
+      <h3>Select a state to get started</h3>
+        <StateContext.Provider value={states}>
+          <Map />
+        </StateContext.Provider>
+        <State />
     </div>
   )
 }

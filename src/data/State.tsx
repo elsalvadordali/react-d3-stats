@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
 import * as d3 from 'd3'
-
+import Map from '../Map'
 type Info = {
     "Average Wage": number,
     "Average Wage Appx MOE": number,
@@ -19,12 +19,13 @@ type Info = {
     Year: number
 }
 
-const Ohio = () => {
+const State = (STATE_ID) => {
+    const states = ['', 'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', '']
     const [data, setData] = useState<Info[]|null|undefined>(null)
     const [dropdown, setDropdown] = useState<string>('open')
     useEffect(() => {
         if (!data) {
-        fetch('https://datausa.io/api/data?Geography=04000US39&measure=Average%20Wage,Average%20Wage%20Appx%20MOE,Total%20Population,Total%20Population%20MOE%20Appx,Record%20Count&drilldowns=Gender&Employment%20Time%20Status=1&Detailed%20Occupation=291141,533030,1191XX,537062,434051&Record%20Count>=5&year=latest')
+        fetch(`https://datausa.io/api/data?Geography=04000US${STATE_ID}&measure=Average%20Wage,Average%20Wage%20Appx%20MOE,Total%20Population,Total%20Population%20MOE%20Appx,Record%20Count&drilldowns=Gender&Employment%20Time%20Status=1&Detailed%20Occupation=291141,533030,1191XX,537062,434051&Record%20Count>=5&year=latest`)
             .then(response => response.json())
             .then(fetched => setData(fetched.data))
         }
@@ -83,9 +84,11 @@ const Ohio = () => {
     }
 
     function sortBy(measure: string) {
-        if (measure === 'occupation') setData((prev: Info[]) => [... prev?.sort((a,b) => a['Detailed Occupation'].localeCompare(b['Detailed Occupation']))])
-        else if (measure === 'wage') setData((prev: Info[]) => [...prev?.sort((a,b) => a['Average Wage'] - b['Average Wage'])])
-        else if (measure === 'gender') setData((prev: Info[]) => [... prev?.sort((a,b) => a['ID Gender'] - b['ID Gender'])])
+        if (data) {
+            if (measure === 'occupation') setData((prev: Info[]) => [... prev?.sort((a,b) => a['Detailed Occupation'].localeCompare(b['Detailed Occupation']))])
+            else if (measure === 'wage') setData((prev: Info[]) => [...prev?.sort((a,b) => a['Average Wage'] - b['Average Wage'])])
+            else if (measure === 'gender') setData((prev: Info[]) => [... prev?.sort((a,b) => a['ID Gender'] - b['ID Gender'])])
+        }
         let ohio = d3.select('#ohio') 
         ohio.selectAll('rect').remove()
         ohio.selectAll('text').remove()
@@ -107,11 +110,11 @@ const Ohio = () => {
                 <button onClick={() => sortBy('gender')}>by Gender</button>
             </div>
         </div>
+        
         </>
     } 
     return <h1>Loading...</h1>
     
 }
 
-export default Ohio
-
+export default State
