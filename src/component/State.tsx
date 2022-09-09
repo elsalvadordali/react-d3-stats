@@ -21,9 +21,7 @@ type Info = {
 }
 
 const State = ({state}) => {
-
     const STATE_ID = allStates.find((iteration) => iteration.name === state) || null
-    console.log(STATE_ID)
     const [data, setData] = useState<Info[]|null|undefined>(null)
     const [dropdown, setDropdown] = useState<string>('open')
     useEffect(() => {
@@ -47,19 +45,15 @@ const State = ({state}) => {
     })
     console.log(toCurrency.format(500))
     function reDraw() {
-        console.log(data)
-        const scale = d3.scaleLinear()
-        //const output = scale(50)
         
         const height = data ? data.length * 60 : 300
-        const width = window.innerWidth > 700 ? (window.innerWidth / 2) - 10 : window.innerWidth - 30
+        const width = window.innerWidth > 700 ? (window.innerWidth / 2.5) - 10 : window.innerWidth
         const maxWidth = data && data.sort((a,b) => a['Average Wage'] - b['Average Wage'])[data.length - 1] || {'Average Wage': width}
 
         console.log(maxWidth, 'max')
 
         //let a = data.sort((a: Info,b: Info) => a["Detailed Occupation"].localeCompare(b["Detailed Occupation"]))
         let info = d3.select(`#${state}`)  
-            .attr('class', 'hello?')
             .attr('width', width)
             .attr('height', height)
         
