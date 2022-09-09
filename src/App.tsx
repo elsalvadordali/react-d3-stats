@@ -20,7 +20,7 @@ function App() {
   
   return (
     <>
-    <div>
+    <div className='main'>
       <h3>Select a state to get started</h3>
           <Map states={states} addState={addState} removeState={removeState} />
           <div className='grid'>

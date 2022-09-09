@@ -33,22 +33,19 @@ const offsets = {
 
 const Map = ({states, addState, removeState}: Props) => {
   function nameThatState(selectedState: string) {
-    console.log(states, 'states')
     const index = states.indexOf(selectedState) 
-    if (index > -1) {
-      console.log('remove')
-      removeState(index)
-    }
-    else {
-      console.log('add ', selectedState)
-      addState(selectedState)
-    }
-    console.log('result', states)
-
+    if (index > -1) removeState(index)
+    else addState(selectedState)
   }
 
   return (
-    <ComposableMap projection='geoAlbersUsa'>
+    <ComposableMap 
+      projection='geoAlbersUsa' 
+      width={window.innerWidth} 
+      height={window.innerWidth * .8} 
+      projectionConfig={{
+        scale: window.innerWidth
+      }} >
       <Geographies geography={geoUrl}>
         {({ geographies }) => (
           <>
@@ -57,7 +54,17 @@ const Map = ({states, addState, removeState}: Props) => {
                 key={geo.rsmKey}
                 stroke='#FFF'
                 geography={geo}
-                fill='#DDD'
+                style={{
+                  default: {
+                    fill: states.includes(geo.properties.name) ? '#dafea4' : '#b4c5bb'
+                  },
+                  hover: {
+                    fill: '#a0c7fe' 
+                  },
+                  pressed: {
+                    fill: '#a0c7fe'
+                  }
+                }}
                 onClick={() => nameThatState(geo.properties.name)}
               />
             ))}
@@ -66,6 +73,7 @@ const Map = ({states, addState, removeState}: Props) => {
               const cur = allStates.find(s => s.val === geo.id);
               return (
                 <g key={geo.rsmKey + '-name'} onClick={() => nameThatState(geo.properties.name)}
+                className={states.includes(geo.properties.name) ? 'color' : 'gray'}
                 >
                   {cur &&
                     centroid[0] > -160 &&

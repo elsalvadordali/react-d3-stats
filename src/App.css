@@ -1,6 +1,7 @@
-#root {
+body {
+ padding: 0; 
+}#root {
   margin: 0 auto;
-  padding: 1rem;
   text-align: center;
 }
 
@@ -17,6 +18,14 @@
 }
 h1 {
   color: #162802;
+}
+.main {
+  width: 100vw;
+  height: 100vh;
+}
+.rsm-svg {
+  width: 100%;
+  height: auto;
 }
 .grid {
   display: flex;
