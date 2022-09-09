@@ -1,17 +1,14 @@
 import { createContext } from "react";
 
 
-export let states = ['hello', 'ass']
+export let states: string[] = []
 
-export function removeState(index: number) {
+export function removeState(index: number): void {
   states = states.filter((state: string, i: number) => i != index && state)
-  console.log(states)
 }
-export function addState(state: string) {
+export function addState(state: string): void {
   states.push(state)
-  console.log(states)
-} 
-
+}
 
 export const StateContext = createContext(states);
 

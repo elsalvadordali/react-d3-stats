@@ -1,7 +1,5 @@
-import { useContext} from 'react';
 import { geoCentroid } from 'd3-geo';
 
-import { StateContext, states, addState, removeState } from './assets/StateContext';
 import {
   ComposableMap,
   Geographies,
@@ -10,7 +8,14 @@ import {
   Annotation
 } from 'react-simple-maps';
 
-import allStates from './data/allstates.json';
+import allStates from '../data/allstates.json';
+
+interface Props {
+  states: string[],
+  addState: (state: string) => void,
+  removeState: (index: number) => void
+
+}
 
 const geoUrl = 'https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json';
 
@@ -26,20 +31,20 @@ const offsets = {
   DC: [49, 21]
 };
 
-const Map = () => {
-
-  const IDK = useContext(StateContext)
-  function nameThatState(cur) {
-    const index = states.indexOf(cur) 
-    console.log(index, IDK)
+const Map = ({states, addState, removeState}: Props) => {
+  function nameThatState(selectedState: string) {
+    console.log(states, 'states')
+    const index = states.indexOf(selectedState) 
     if (index > -1) {
-      console.log('come on')
+      console.log('remove')
       removeState(index)
     }
     else {
-      console.log('else')
-      addState(cur)
+      console.log('add ', selectedState)
+      addState(selectedState)
     }
+    console.log('result', states)
+
   }
 
   return (
