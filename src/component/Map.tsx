@@ -41,8 +41,8 @@ const Map = ({states, addState, removeState}: Props) => {
   return (
     <ComposableMap 
       projection='geoAlbersUsa' 
-      width={window.innerWidth} 
-      height={window.innerWidth * .8} 
+      width={window.innerWidth } 
+      height={window.innerWidth * .6} 
       projectionConfig={{
         scale: window.innerWidth
       }} >
@@ -56,13 +56,13 @@ const Map = ({states, addState, removeState}: Props) => {
                 geography={geo}
                 style={{
                   default: {
-                    fill: states.includes(geo.properties.name) ? '#dafea4' : '#b4c5bb'
+                    fill: states.includes(geo.properties.name) ? '#bdcddd' : '#dce8d9'
                   },
                   hover: {
-                    fill: '#a0c7fe' 
+                    fill: '#bdcddd' 
                   },
                   pressed: {
-                    fill: '#a0c7fe'
+                    fill: '#bdcddd'
                   }
                 }}
                 onClick={() => nameThatState(geo.properties.name)}

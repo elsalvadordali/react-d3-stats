@@ -19,6 +19,10 @@ body {
 h1 {
   color: #162802;
 }
+h6 {
+  margin: .5rem;
+  font-size: 2rem;
+}
 .main {
   width: 100vw;
   height: 100vh;
@@ -27,20 +31,16 @@ h1 {
   width: 100%;
   height: auto;
 }
-.grid {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: flex-start;
-  align-items: flex-start;
-}
+
 .grid div {
   box-sizing: border-box;
 }
-.open, .close {
+.open, .sort {
   border: 2px solid black;
-  
+  margin: .5rem 2rem;
+  padding: .5rem;
 }
-.close div {
+.sort div {
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
@@ -48,10 +48,11 @@ h1 {
 .open div {
   display: none;
 }
-.close button {
+.sort button {
   background-color: transparent;
+  margin: .5rem;
 }
-.close button:hover {
+.sort button:hover {
   border-color: transparent;
 }
 .color {
@@ -66,17 +67,27 @@ h1 {
 .legend {
   display: flex;
   flex-flow: column nowrap;
+  padding: 0 0 1rem 0;
 }
 .legend div {
   display: flex;
   flex-direction: row;
   align-items: center;
+  padding: 0 0 0 1rem ;
 }
 .blue {
-  background-color: #a0c7fe;
+  background-color: #7dac66;
 }
 .green {
   background-color: #dafea4;
+}
+.pink {
+  background-color: #fcebd6;
+}
+.grid {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
 }
 
 @keyframes logo-spin {
@@ -100,4 +111,13 @@ h1 {
 
 .read-the-docs {
   color: #888;
+}
+
+@media screen and (min-width: 700px) {
+  .grid {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
 }
