@@ -1,11 +1,13 @@
 {
   "name": "us-stats",
   "private": true,
+  "homepage": "https://elsalvadordali.github.io/react-d3-stats",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "tsc && vite build",
+    "predeploy": "npm run build",
+    "build": "gh-pages -d build",
     "preview": "vite preview"
   },
   "dependencies": {
