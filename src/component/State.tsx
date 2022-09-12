@@ -8,9 +8,8 @@ type Info = {
     "Average Wage Appx MOE": number,
     "Detailed Occupation": string,
     "Employment Time Status": string,
-    Gender: string,
-    Geography: string,
     "ID Detailed Occupation": string,
+    "Gender": string,
     "ID Gender": number,
     "ID Geography": string,
     "ID Year": number,
@@ -18,7 +17,6 @@ type Info = {
     "Slug Geography": string,
     "Total Population": number,
     "Total Population MOE Appx": number,
-    Year: number
 }
 type Props = {
     state: string,
@@ -32,8 +30,6 @@ const State = ({ state, sortBy }: Props) => {
 
     const height = data ? data.length * 60 : 300
     const width = window.innerWidth > 700 ? (window.innerWidth / 2.5) - 10 : window.innerWidth - 60
-    //const maxWidth = data && data.sort((a,b) => a['Average Wage'] - b['Average Wage'])[data.length - 1] || {'Average Wage': width}
-
 
     useEffect(() => {
         if (!data && STATE_ID) {
@@ -45,21 +41,15 @@ const State = ({ state, sortBy }: Props) => {
         }
     }, [])
     
-    /**
-     * This function sorts data and sets it 
-     */
-    
     if (data && STATE_ID) {
         return (
         <div className={STATE_NO_SPACE}>
-            
             <div id='container'><h1>{state}</h1></div>
             <Data data={data} STATE_NAME={STATE_NO_SPACE} width={width} height={height} sortBy={sortBy} />
             <div className='legend'>
                 <div><div className='color blue'></div> <p>Male</p></div>
                 <div><div className='color pink'></div> <p>Female</p></div>
             </div>
-            
         </div>
         )
     } else if (data === undefined) return <h3>Data corrupted. Please try again</h3>

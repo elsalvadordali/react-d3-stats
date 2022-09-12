@@ -5,9 +5,8 @@ type Info = {
     "Average Wage Appx MOE": number,
     "Detailed Occupation": string,
     "Employment Time Status": string,
-    Gender: string,
-    Geography: string,
     "ID Detailed Occupation": string,
+    "Gender": string,
     "ID Gender": number,
     "ID Geography": string,
     "ID Year": number,
@@ -15,7 +14,6 @@ type Info = {
     "Slug Geography": string,
     "Total Population": number,
     "Total Population MOE Appx": number,
-    Year: number
 }
 
 type Props = {
@@ -25,8 +23,6 @@ type Props = {
     width: number,
     sortBy: string
 }
-
-
 
 const Data = ({data, STATE_NAME, height, width, sortBy}: Props) => {
     const [datum, setData] = useState(data)
@@ -53,9 +49,6 @@ const Data = ({data, STATE_NAME, height, width, sortBy}: Props) => {
         
     }, [sortBy])
 
-    function sortWages() {
-        
-    }
 
     function findLargest() {
         let largest = 0

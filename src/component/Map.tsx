@@ -86,6 +86,9 @@ const Map = ({states, addState, removeState}: Props) => {
                       </Marker>
                     ) : (
                       <Annotation
+                        connectorProps={{
+                          stroke: '#0f6360'
+                        }}
                         subject={centroid}
                         dx={offsets[cur.id][0]}
                         dy={offsets[cur.id][1]}

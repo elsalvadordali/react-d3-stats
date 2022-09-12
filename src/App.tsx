@@ -23,11 +23,11 @@ function App() {
     <>
     <div className='main'>
       <h3>Select a state to get started</h3>
-          <Map states={states} addState={addState} removeState={removeState}  />
+          <Map states={states} addState={addState} removeState={removeState} />
           <div onClick={() => setDropdown(dropdown === 'sort' ? 'open' : 'sort')} className={dropdown}>
                 <h6>{dropdown}</h6>
                 <div>
-                    <button onClick={() => setSort('occupation')}>by Name</button>
+                    <button onClick={() => setSort('occupation')}>by Occupation</button>
                     <button onClick={() => setSort('wage')}>by Wage</button>
                     <button onClick={() => setSort('gender')}>by Gender</button>
                 </div>
