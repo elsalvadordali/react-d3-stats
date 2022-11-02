@@ -29,7 +29,6 @@ const State = ({ state, sortBy }: Props) => {
     const [data, setData] = useState<Info[]|null|undefined>(undefined)
 
     const height = data ? data.length * 60 : 300
-    const width = window.innerWidth > 700 ? (window.innerWidth / 2.5) - 10 : window.innerWidth - 60
 
     useEffect(() => {
         if (!data && STATE_ID) {
@@ -44,12 +43,9 @@ const State = ({ state, sortBy }: Props) => {
     if (data && STATE_ID) {
         return (
         <div className={STATE_NO_SPACE}>
-            <div id='container'><h1>{state}</h1></div>
-            <Data data={data} STATE_NAME={STATE_NO_SPACE} width={width} height={height} sortBy={sortBy} />
-            <div className='legend'>
-                <div><div className='color blue'></div> <p>Male</p></div>
-                <div><div className='color pink'></div> <p>Female</p></div>
-            </div>
+            <div id='container'><h2>{state}</h2></div>
+            <Data data={data} STATE_NAME={STATE_NO_SPACE} sortBy={sortBy} />
+            
         </div>
         )
     } else if (data === undefined) return <h3>Data corrupted. Please try again</h3>

@@ -19,16 +19,21 @@ type Info = {
 type Props = {
     data: Info[],
     STATE_NAME: string,
-    height: number,
-    width: number,
     sortBy: string
 }
 
-const Data = ({data, STATE_NAME, height, width, sortBy}: Props) => {
+const Data = ({data, STATE_NAME, sortBy}: Props) => {
     const [datum, setData] = useState(data)
+    const [width, setWidth] = useState(window.innerWidth)
+    useEffect(() => {
+        setWidth(window.innerWidth) 
+        const info = d3.select(`#${STATE_NAME}`)  
+            info.selectAll('rect').remove()
+            info.selectAll('text').remove()
+        draw()
+     }, [window.innerWidth])
 
     useEffect(() => {
-        console.log('draw', datum)
         const info = d3.select(`#${STATE_NAME}`)  
             info.selectAll('rect').remove()
             info.selectAll('text').remove()
@@ -36,14 +41,17 @@ const Data = ({data, STATE_NAME, height, width, sortBy}: Props) => {
     }, [datum])
 
     useEffect(() => {
-        if (sortBy === 'gender') {
-            console.log('g')
+        if (sortBy === 'gender-reverse') {
+            setData([...datum?.sort((a,b) => b['ID Gender'] - a['ID Gender'])])
+        } else if (sortBy === 'occupation-reverse') {
+            setData([...datum?.sort((a,b) => b['Detailed Occupation'].localeCompare(a['Detailed Occupation']))])
+        } else if (sortBy === 'wage-reverse') {
+            setData([...datum?.sort((a,b) => b['Average Wage'] - a['Average Wage'])])
+        } else if (sortBy === 'gender') {
             setData([...datum?.sort((a,b) => a['ID Gender'] - b['ID Gender'])])
         } else if (sortBy === 'wage') {
-            console.log('w')
             setData([...datum?.sort((a,b) => a['Average Wage'] - b['Average Wage'])])
         } else if (sortBy === 'occupation') {
-            console.log('n')
             setData([...datum?.sort((a,b) => a['Detailed Occupation'].localeCompare(b['Detailed Occupation']))])
         }
         
@@ -66,11 +74,20 @@ const Data = ({data, STATE_NAME, height, width, sortBy}: Props) => {
         
     const max = findLargest() 
 
+    var tooltip = d3.select(`#${STATE_NAME}`)  
+    .append("div")
+    .style("position", "absolute")
+    .style("z-index", "10")
+    .style("visibility", "hidden")
+    .style("background", "#000")
+    .text("a simple tooltip");
+
+
+
     function draw() {
         if (datum) {
         const info = d3.select(`#${STATE_NAME}`)  
-        
-            .attr('width', width)
+            .attr('width', width - 20)
             .attr('height', 350)
         
             info.selectAll('rect')
@@ -78,9 +95,15 @@ const Data = ({data, STATE_NAME, height, width, sortBy}: Props) => {
             .enter()
             .append('rect')
             .attr('y', (d: Info, i: number) => i * 35)
-            .attr('x', (d: Info) => width - ((d['Average Wage'] / max * .9) * width) - 30)
-            .attr('fill', (d: Info) => d.Gender == 'Male' ? '#7dac66' : '#fcebd6')
-            .attr('width', (d: Info) => ((d['Average Wage'] / max * .9) * width) - 30 )
+            .attr('x', (d: Info) => {
+                if (width < 896) return 36
+                return (width / 2)
+            })
+            .attr('fill', (d: Info) => d.Gender == 'Male' ? '#3d5a80' : '#e2a499')
+            .attr('width', (d: Info) => {
+                if (width < 896) return (d['Average Wage'] / max * .9) * width - 10
+                return ((d['Average Wage'] / max * .9) * (width / 2)) - 30
+            })
             .attr('height', 30)
 
             //numbers
@@ -90,10 +113,13 @@ const Data = ({data, STATE_NAME, height, width, sortBy}: Props) => {
             .append('text')
             .attr('class', 'wage')
             .text((d: Info) => toCurrency.format(d['Average Wage']))
-            .attr('x', (d: Info, i: number) => width - ((d['Average Wage'] / max * .9) * width) < width - 120 ? width - ((d['Average Wage'] / max * .9) * width) - 25 : width - 150)
+            .attr('x', (d: Info, i: number) => {
+                if (width < 896) return (d['Average Wage'] / max * .9) * width - 76
+                return (width / 2) + (d['Average Wage'] / max * .9) * (width / 2) - 120
+            })
             .attr('y', (d: Info, i: number) => 23 + (i * 35))
             .attr('font-size', 24)
-            .attr('fill', '#162802')
+            .attr('fill', (d) => d.Gender == 'Male' ? '#fff' : '#162802')
 
             //icons
             info.selectAll('text.value')
@@ -101,7 +127,10 @@ const Data = ({data, STATE_NAME, height, width, sortBy}: Props) => {
             .enter()
             .append('text')
             .attr('class', 'occupation')
+            .attr('id', (d) => d['Detailed Occupation'])
+            .attr("text-anchor", width < 896 ? "start" : "end")
             .text((d: Info) => {
+                if (width < 896) {
                 if (d['Detailed Occupation'].includes('nurs') && d['Gender'] === 'Female') return '👩‍⚕️'
                 else if (d['Detailed Occupation'].includes('nurs') && d['Gender'] === 'Male') return '👨‍⚕️'
                 else if (d['Detailed Occupation'].includes('manager') && d['Gender'] === 'Male') return '👨‍💼' 
@@ -112,12 +141,15 @@ const Data = ({data, STATE_NAME, height, width, sortBy}: Props) => {
                 else if (d['Detailed Occupation'].includes('represent') && d['Gender'] === 'Male') return '🤵‍♂️'
                 else if (d['Detailed Occupation'].includes('driver')) return '🚚'
                 return ''
+                }
+                if (d['Detailed Occupation'].includes('Drive')) return 'Drivers & Sales Workers'
+                if (d['Detailed Occupation'].includes('Labor')) return 'Laborers & freight'
+                return d["Detailed Occupation"]
             })
-            .attr('x', width - 60)
-            .attr('font-size', 28)
+            .attr('x', width < 895 ? 5 : (width / 2) - 15)
+            .attr('font-size', 20)
             .attr('y', (d: Info, i: number) => 25 + (i * 35))
             .attr('fill', '#162802')
-            
         } else {
             let info = d3.select(`#${STATE_NAME}`)  
 
