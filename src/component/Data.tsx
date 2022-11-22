@@ -37,13 +37,10 @@ const Data = ({data, STATE_NAME, height, width, sortBy}: Props) => {
 
     useEffect(() => {
         if (sortBy === 'gender') {
-            console.log('g')
             setData([...datum?.sort((a,b) => a['ID Gender'] - b['ID Gender'])])
         } else if (sortBy === 'wage') {
-            console.log('w')
             setData([...datum?.sort((a,b) => a['Average Wage'] - b['Average Wage'])])
         } else if (sortBy === 'occupation') {
-            console.log('n')
             setData([...datum?.sort((a,b) => a['Detailed Occupation'].localeCompare(b['Detailed Occupation']))])
         }
         

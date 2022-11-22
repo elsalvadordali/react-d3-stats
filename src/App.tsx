@@ -15,10 +15,6 @@ function App() {
     setStates([...states, state])
   } 
 
-  //useEffect(() => {
-  //  setStates(() => states)
-  //}, [states])
-
   return (
     <>
     <div className='main'>
