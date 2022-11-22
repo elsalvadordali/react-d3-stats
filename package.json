@@ -1,7 +1,7 @@
 {
   "name": "us-stats",
   "private": true,
-  "homepage": "https://elsalvadordali.github.io/react-d3-stats",
+  "homepage": "http://us-stats.tijana.link/",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
