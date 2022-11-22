@@ -19,31 +19,42 @@ type Info = {
 type Props = {
     data: Info[],
     STATE_NAME: string,
-    height: number,
-    width: number,
     sortBy: string
 }
 
-const Data = ({data, STATE_NAME, height, width, sortBy}: Props) => {
+const Data = ({ data, STATE_NAME, sortBy }: Props) => {
     const [datum, setData] = useState(data)
+    const [width, setWidth] = useState(window.innerWidth * .9)
+    useEffect(() => {
+        setWidth(window.innerWidth)
+        const info = d3.select(`#${STATE_NAME}`)
+        info.selectAll('rect').remove()
+        info.selectAll('text').remove()
+        draw()
+    }, [window.innerWidth])
 
     useEffect(() => {
-        console.log('draw', datum)
-        const info = d3.select(`#${STATE_NAME}`)  
-            info.selectAll('rect').remove()
-            info.selectAll('text').remove()
+        const info = d3.select(`#${STATE_NAME}`)
+        info.selectAll('rect').remove()
+        info.selectAll('text').remove()
         draw()
     }, [datum])
 
     useEffect(() => {
-        if (sortBy === 'gender') {
-            setData([...datum?.sort((a,b) => a['ID Gender'] - b['ID Gender'])])
+        if (sortBy === 'gender-reverse') {
+            setData([...datum?.sort((a, b) => b['ID Gender'] - a['ID Gender'])])
+        } else if (sortBy === 'occupation-reverse') {
+            setData([...datum?.sort((a, b) => b['Detailed Occupation'].localeCompare(a['Detailed Occupation']))])
+        } else if (sortBy === 'wage-reverse') {
+            setData([...datum?.sort((a, b) => b['Average Wage'] - a['Average Wage'])])
+        } else if (sortBy === 'gender') {
+            setData([...datum?.sort((a, b) => a['ID Gender'] - b['ID Gender'])])
         } else if (sortBy === 'wage') {
-            setData([...datum?.sort((a,b) => a['Average Wage'] - b['Average Wage'])])
+            setData([...datum?.sort((a, b) => a['Average Wage'] - b['Average Wage'])])
         } else if (sortBy === 'occupation') {
-            setData([...datum?.sort((a,b) => a['Detailed Occupation'].localeCompare(b['Detailed Occupation']))])
+            setData([...datum?.sort((a, b) => a['Detailed Occupation'].localeCompare(b['Detailed Occupation']))])
         }
-        
+
     }, [sortBy])
 
 
@@ -60,66 +71,91 @@ const Data = ({data, STATE_NAME, height, width, sortBy}: Props) => {
         currency: 'USD',
         maximumFractionDigits: 0
     })
-        
-    const max = findLargest() 
 
+    const max = findLargest()
+
+    var tooltip = d3.select(`#${STATE_NAME}`)
+        .append("div")
+        .style("position", "absolute")
+        .style("z-index", "10")
+        .style("visibility", "hidden")
+        .style("background", "#000")
+        .text("a simple tooltip");
+
+
+    console.log(width, max)
     function draw() {
         if (datum) {
-        const info = d3.select(`#${STATE_NAME}`)  
-        
-            .attr('width', width)
-            .attr('height', 350)
-        
+            const info = d3.select(`#${STATE_NAME}`)
+                .attr('width', width < 896 ? width - 10 : width * .8)
+                .attr('height', 350)
+
             info.selectAll('rect')
-            .data(datum)
-            .enter()
-            .append('rect')
-            .attr('y', (d: Info, i: number) => i * 35)
-            .attr('x', (d: Info) => width - ((d['Average Wage'] / max * .9) * width) - 30)
-            .attr('fill', (d: Info) => d.Gender == 'Male' ? '#7dac66' : '#fcebd6')
-            .attr('width', (d: Info) => ((d['Average Wage'] / max * .9) * width) - 30 )
-            .attr('height', 30)
+                .data(datum)
+                .enter()
+                .append('rect')
+                .attr('y', (d: Info, i: number) => i * 35)
+                .attr('x', (d: Info) => {
+                    if (width < 896) return 28
+                    return (width / 2)
+                })
+                .attr('fill', (d: Info) => d.Gender == 'Male' ? '#3d5a80' : '#e2a499')
+                .attr('width', (d: Info) => {
+                    if (width < 896) return ((d['Average Wage'] / max) * width) - 60
+                    return ((d['Average Wage'] / max * ((width / 2.5))))
+                })
+                .attr('height', 30)
 
             //numbers
             info.selectAll('text.title')
-            .data(datum)
-            .enter()
-            .append('text')
-            .attr('class', 'wage')
-            .text((d: Info) => toCurrency.format(d['Average Wage']))
-            .attr('x', (d: Info, i: number) => width - ((d['Average Wage'] / max * .9) * width) < width - 120 ? width - ((d['Average Wage'] / max * .9) * width) - 25 : width - 150)
-            .attr('y', (d: Info, i: number) => 23 + (i * 35))
-            .attr('font-size', 24)
-            .attr('fill', '#162802')
+                .data(datum)
+                .enter()
+                .append('text')
+                .attr('class', 'wage')
+                .text((d: Info) => toCurrency.format(d['Average Wage']))
+                .attr('x', (d: Info, i: number) => {
+                    console.log(((d['Average Wage'] / max * ((width / 2.5)))), (d['Average Wage'].toString().length * 6))
+                    if (width < 896) return ((d['Average Wage'] / max) * width) - 60 < (d['Average Wage'].toString().length * 6) ? ((d['Average Wage'] / max) * width) - 30 : (d['Average Wage'] / max) * width - d['Average Wage'].toString().length * 6
+                    return ((d['Average Wage'] / max * ((width / 2.5)))) < (d['Average Wage'].toString().length * 6) ? (width / 2) + 20 : (width / 2) + (d['Average Wage'] / max * (width / 2.5)) - (d['Average Wage'].toString().length == 6 ? 120 : 100) + 10
+                })
+                .attr('y', (d: Info, i: number) => 21 + (i * 35))
+                .attr('font-size', width < 896 ? 18 : 24)
+                .attr('fill', (d) => d.Gender == 'Male' && ((d['Average Wage'] / max) * width) - 60 > (d['Average Wage'].toString().length * 6) ? '#fff' : '#162802')
 
             //icons
             info.selectAll('text.value')
-            .data(datum)
-            .enter()
-            .append('text')
-            .attr('class', 'occupation')
-            .text((d: Info) => {
-                if (d['Detailed Occupation'].includes('nurs') && d['Gender'] === 'Female') return '👩‍⚕️'
-                else if (d['Detailed Occupation'].includes('nurs') && d['Gender'] === 'Male') return '👨‍⚕️'
-                else if (d['Detailed Occupation'].includes('manager') && d['Gender'] === 'Male') return '👨‍💼' 
-                else if (d['Detailed Occupation'].includes('manager') && d['Gender'] === 'Female') return '👩‍💼' 
-                else if (d['Detailed Occupation'].includes('Labor') && d['Gender'] === 'Male') return '👷‍♂️' 
-                else if (d['Detailed Occupation'].includes('Labor') && d['Gender'] === 'Female') return '👷‍♀️' 
-                else if (d['Detailed Occupation'].includes('represent') && d['Gender'] === 'Female') return '🤵‍♀️'
-                else if (d['Detailed Occupation'].includes('represent') && d['Gender'] === 'Male') return '🤵‍♂️'
-                else if (d['Detailed Occupation'].includes('driver')) return '🚚'
-                return ''
-            })
-            .attr('x', width - 60)
-            .attr('font-size', 28)
-            .attr('y', (d: Info, i: number) => 25 + (i * 35))
-            .attr('fill', '#162802')
-            
+                .data(datum)
+                .enter()
+                .append('text')
+                .attr('class', 'occupation')
+                .attr('id', (d) => d['Detailed Occupation'])
+                .attr("text-anchor", width < 896 ? "start" : "end")
+                .text((d: Info) => {
+                    if (width < 896) {
+                        if (d['Detailed Occupation'].includes('nurs') && d['Gender'] === 'Female') return '👩‍⚕️'
+                        else if (d['Detailed Occupation'].includes('nurs') && d['Gender'] === 'Male') return '👨‍⚕️'
+                        else if (d['Detailed Occupation'].includes('manager') && d['Gender'] === 'Male') return '👨‍💼'
+                        else if (d['Detailed Occupation'].includes('manager') && d['Gender'] === 'Female') return '👩‍💼'
+                        else if (d['Detailed Occupation'].includes('Labor') && d['Gender'] === 'Male') return '👷‍♂️'
+                        else if (d['Detailed Occupation'].includes('Labor') && d['Gender'] === 'Female') return '👷‍♀️'
+                        else if (d['Detailed Occupation'].includes('represent') && d['Gender'] === 'Female') return '🤵‍♀️'
+                        else if (d['Detailed Occupation'].includes('represent') && d['Gender'] === 'Male') return '🤵‍♂️'
+                        else if (d['Detailed Occupation'].includes('driver')) return '🚚'
+                        return ''
+                    }
+                    if (d['Detailed Occupation'].includes('Drive')) return 'Drivers & Sales Workers'
+                    if (d['Detailed Occupation'].includes('Labor')) return 'Laborers & freight'
+                    return d["Detailed Occupation"]
+                })
+                .attr('x', width < 895 ? 0 : (width / 2) - 15)
+                .attr('font-size', 24)
+                .attr('y', (d: Info, i: number) => 25 + (i * 35))
+                .attr('fill', '#162802')
         } else {
-            let info = d3.select(`#${STATE_NAME}`)  
+            let info = d3.select(`#${STATE_NAME}`)
 
             info.selectAll('text.value')
-            .text('Try reloading the page')
+                .text('Try reloading the page')
         }
     }
 
